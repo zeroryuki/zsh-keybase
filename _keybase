@@ -1,0 +1,414 @@
+#compdef keybase
+#autoload
+
+local curcontext="$curcontext" state line ret=1
+local -a _command_args _global_args _subcommands
+
+local IFS=$'\n'
+_global_args=($(keybase advanced | grep '^\s*--' | sed -r 's/^[\t ]*(--[^\t ,]+)( [^\t ,]*)?,? ?(--?[^\t ]+)?[\t ]*(.*)$/(\3)\1[\4]/'))
+
+_arguments -C \
+  '(- 1 *)'{-v,--version}'[display version information]' \
+  '(- 1 *)'{-h,--help}'[display help information]' \
+  '1: :->cmds' \
+  $_global_args \
+  '*:: :->args' && ret=0
+
+case $state in
+  cmds)
+    _subcommands=(
+      "account:Modify your account"
+      "base62:base62 operations"
+      "chat:chat securely with keybase users"
+      "ctl:control the background keybase service"
+      "currency:manage cyrptocurrency address"
+      "decrypt:decrypt messages or files for keybase users"
+      "deprovision:revoke the current device, log out, and delete local state"
+      "device:manage your devices"
+      "dump-keyfamily:print out a user's current key family"
+      "encrypt:encrypt messages or files for keybase users"
+      "follow:verify a user's authenticity and optionally follow them"
+      "fs:perform filesystem operations"
+      "git:Manage git repos"
+      "home:Get and set the 'home' screen"
+      "id:identify a user and check their signature chain"
+      "list-followers:list thost who follow you"
+      "list-following:list who you or the given user is following"
+      "log:manage keybase log"
+      "login:establish a session with the keybase server"
+      "logout:logout and remove session information"
+      "oneshot:Establish a oneshot device, as in logging into keybase from a disposable docker"
+      "paperkey:generate paper keys for recovering your account"
+      "passphrase:change or recover your keybase passphrase"
+      "pgp:manage keybase PGP keys"
+      "ping:ping the keybase API server"
+      "prove:generate a new proof"
+      "rekey:rekey status and actions"
+      "selfprovision:Provision a new device if the current device is a clone"
+      "sign:sign a document"
+      "signup:signup for a new account"
+      "sigs:manage signatures"
+      "status:show information about current user"
+      "team:Manage teams"
+      "unfollow:unfollow a user"
+      "untrack:unfollow a user"
+      "update:the updater"
+      "verify:verify message or file signatures for keybase users"
+      "version:print out version and build information"
+      "wallet:Send and receive Stellar XLM"
+      "h:shows a list fo commands or help for one command"
+      "help:shows a list fo commands or help for one command"
+    )
+    _describe -t subcommands 'Keybase subcommands' _subcommands && ret=0
+    ;;
+  args)
+    case $line[1] in
+      help)
+        _values "commands" \
+	  'account' \
+          'base62' \
+          'chat' \
+          'ctl' \
+          'currency' \
+          'decrypt' \
+          'deprovision' \
+          'device' \
+          'dump-keyfamily' \
+          'encrypt' \
+          'follow' \
+	  'track' \
+          'fs' \
+	  'git' \
+	  'home' \
+          'id' \
+          'list-followers' \
+          'list-following' \
+          'log' \
+          'login' \
+          'logout' \
+	  'oneshot' \
+          'paperkey' \
+          'passphrase' \
+          'pgp' \
+          'ping' \
+          'prove' \
+          'rekey' \
+	  'selfprovision' \
+          'sign' \
+          'signup' \
+          'sigs' \
+          'status' \
+	  'team' \
+          'unfollow' \
+          'untrack' \
+          'update' \
+          'verify' \
+          'version' \
+	  'wallet' \
+	  'h' \
+          'help' && ret=0
+        ;;
+      account)
+	_values "commands" \
+	  'delete[Permanently delete account]' \
+          'lockdown[Manage account lockdown mode]' \
+	;;
+      base62)
+        _values "command" \
+          'decode[base62 decode]' \
+          'encode[base62 encode]' \
+        ;;
+      chat)
+        _chat_sub=(
+          'api:JSON api' \
+	  'api-listen:Listen and print incoming chat actions in JSON format' \
+	  'delete-channel:Delete a channel' \
+	  'delete-history:Delete chat history in a conversation' \
+          'download:Download an attachment from a conversation' \
+          'hide:Hide or block a conversation' \
+	  'join-channel:Join a conversation channel' \
+	  'leave-channel:Leave a channel' \
+          'rename-channel:Rename a channel' \
+          'create-channel:Create a channel' \
+          'list:List conversations sorted by activity' \
+	  'l:List conversations sorted by activity' \
+	  'list-channels:List of channels on a team' \
+          'list-unread:List conversations with unread messages at the top' \
+	  'lsur:List conversations with unread messages at the top' \
+          'mute:Mute or unmute a conversation' \
+          'read:Show new messages in a conversation and mark them as read' \
+          'report:Report a conversation (also blocks it)' \
+          'send:Send a message to a conversation' \
+          'upload:Upload an attachment to a conversation')
+	_describe -t subcommands 'Chat Options' _chat_sub && ret=0
+        ;;
+      ctl)
+        _values "command" \
+          'start[Start the backgroung keybase service]' \
+          'stop[Stop the backgroung keybase service]' \
+          'reload[Reload config file]' \
+          'restart[Restart the background keybase service]' \
+          "log-rotate[Close and open the keybase service's log file]" \
+          'watchdog[Start, watch and prop up the backgound service]' \
+          'watchdog2[Start and monitor background services]' \
+          'app-exit[Exit the Keybase app]' \
+        ;;
+      currency)
+        _values "command" \
+          'add[Sign a cryptocurrency (bitcoin or zcash) address into your identity]' \
+        ;;
+      decrypt)
+        _command_args=(
+          '(--infile)--infile[Specify an input file]' \
+          '(--message)--message[Provide the message on the command line]' \
+          '(--outfile)--outfile[Specify an outfile (stdout by default)]' \
+          '(--interactive)--interactive[Interactive prompt for decryption after sender verification]' \
+          '(--force)--force[Force unprompted decryption, even on an indentify failure]' \
+          '(--paperkey)--paperkey[Use a paper key for decryption]' \
+          '(--encryptor-outfile)--encryptor-outfile[Write the Keybase name of the encryptor to this file]'
+        )
+        ;;
+      device)
+        _values "command" \
+          'remove[Remove a device]' \
+          'list[List devices]' \
+          'add[Authorize a new device]' \
+        ;;
+      encrypt)
+        _command_args=(
+          '(--binary)--binary[Output in binary (rather than ASCII/armored)]' \
+          '(--infile)--infile[Specify an input file]' \
+          '(message)--message[Provide the message on the command line]' \
+          '(--outfile)--outfile[Specify an outfile (stdout by default)]' \
+          "(--hide-recipients)--hide-recipients[Don't include recipients in metadata]" \
+          "(--anonymous)--anonymous[Don't include sender or recipients in metadata. Implies --hide-recipients]" \
+          "(--no-self)--no-self[Don't encrypt for yourself]"
+        )
+        ;;
+      follow)
+        _command_args=(
+          "(--local)--local[Only follow locally, don't send a public statement to the server]" \
+	  "(-l)-l[Only follow locally, don't send a public statement to the server]" \
+          '(-y)-y[Approve remote following without prompting]' \
+          '(--skip-proof-cache)--skip-proof-cache[Skip cached proofs, force re-check]'
+        )
+        ;;
+      track)
+        _command_args=(
+          "(--local)--local[Only follow locally, don't send a public statement to the server]" \
+          '(-y)-y[Approve remote following without prompting]' \
+          '(--skip-proof-cache)--skip-proof-cache[Skip cached proofs, force re-check]'
+        )
+        ;;
+      fs)
+        _values "command" \
+          'ls[list directory contents]' \
+          'cp[copy one or more directory elements to dest]' \
+          'mv[move one or more directory elements to dest]' \
+          'read[output file contents to standard output]' \
+          'rm[remove one or more directory elements]' \
+          'mkdir[create directory]' \
+          'stat[stat directory element]' \
+          'get-status[get status of pending operation]' \
+          'kill[kill operation]' \
+          'ps[list running operations]' \
+          'write[write input to file]' \
+        ;;
+      git)
+	_values "command" \
+	   'create[Create a personal or team git repository]' \
+           'delete[Delete a personal or team git repository]' \
+           'list[List the personal and team git repositories you have access to]' \
+           'gc[Run garbage collection on a personal or team git repository]' \
+           'settings[View and change team repo settings]'
+	;;
+      home)
+	_command_args=(
+	  '(--mark-viewed)--mark-viewed[Mark the home page as 'viewed']'
+          '(--skip-todo)--skip-todo[skip a category of home TODO items]'
+	)
+	;;
+      id)
+        _command_args=(
+          '(--skip-proof-cache)--skip-proof-cache[Skip cached proofs, force re-check]'
+        )
+        ;;
+      list-followers)
+        _command_args=(
+          '(--verbose)--verbose[A full dump, with more gory details]'
+        )
+        ;;
+      list-following)
+        _command_args=(
+          '(--filter)--filter[Provide a regex filter]' \
+          '(--headers)--headers[Show column headers]' \
+          '(--json)--json[Output as JSON (default is text)]' \
+          '(--verbose)--verbose[A full dump, with more gory details]'
+        )
+        ;;
+      log)
+        _values "command" \
+          'send[Send recent debug logs to keybase]' \
+        ;;
+      login)
+        _command_args=(
+          '(--provision-by-email)--provision-by-email[Use an email address associated with a keybase account to provision a device]'
+        )
+        ;;
+      passphrase)
+        _values "command" \
+          'change[Change your keybase account passphrase]' \
+          'recover[Recover your keybase account passphrase]' \
+        ;;
+      oneshot)
+	_command_args=(
+	  '(--paperkey)--paperkey[DANGEROUS: specify a paper key (or try the KEYBASE_PAPERKEY environment variable)]' \
+          '(--username)--username[specify a username (or try the KEYBASE_USERNAME environment variable)]' \
+	  '(-u)-u[specify a username (or try the KEYBASE_USERNAME environment variable)]'
+	)
+	;;
+      passphrase)
+	_values "command" \
+	   'change[Change your keybase account passphrase]' \
+           'recover[Recover your keybase account passphrase]'
+	;;
+      pgp)
+        _values "command" \
+          'gen[Generate a new PGP key and write to local secret keychain]' \
+          'pull[Download the latest PGP keys for people you track]' \
+          'update[Update your public PGP keys on keybase with those exported from the local GPG keyring]' \
+          'select[Select a key as your own and register the public half with the server]' \
+          'sign[PGP sign a document]' \
+          'encrypt[PGP encrypt messages or files for keybase users]' \
+          'decrypt[PGP decrypt messages or files for keybase users]' \
+          'verify[PGP verify message or file signatures for keybase users]' \
+          'export[Export a PGP key from keybase]' \
+          'import[Import a PGP key into keybase]' \
+          'drop[Drop Keybases use of a PGP key]' \
+          'list[List the active PGP keys in your account]' \
+          'purge[Purge all PGP keys from Keybase keyring]' \
+         ;;
+      ping)
+        _command_args=(
+          '(--gregor)--gregor[Ping the Gregor server]'
+        )
+        ;;
+      prove)
+        _command_args=(
+          '(--output)--output[Output proof text to file (rather than standard out)]' \
+          "(--force)--force[Don't prompt]" \
+        )
+        _values "prove command" \
+          'service[Supported services are: coinbase, hackernews, reddit, dns, github, twitter, web, http, https' \
+          'service username[Username or hostname at that service]'
+        ;;
+      rekey)
+        _values "command" \
+          'status[Get pending rekey status]' \
+          'paper[Submit a paper key to help rekeying]' \
+         ;;
+      sign)
+        _command_args=(
+          '(--binary)--binary[Output binary message (default is armored)]' \
+          '(--detached)--detached[Detached signature (default is attached)]' \
+          '(--infile)--infile[Specify an input file]' \
+          '(--message)--message[Provide the message to sign on the command line]' \
+          '(--outfile)--outfile[Specify an outfile (default is STDOUT)]'
+        )
+        ;;
+      signup)
+        _command_args=(
+          '(--invite-code)--invite-code[Specify an invite code]' \
+          '(--email)--email[Specify an account email]' \
+          '(--username)--username[Specify a username]'
+        )
+        ;;
+      sigs)
+        _values "command" \
+          'list[List signatures]' \
+          'revoke[Revoke a signature by sig ID]' \
+        ;;
+      status)
+        _command_args=(
+          '(--json)--json[Output status as JSON]' \
+        )
+        ;;
+      team)
+	_values "command" \
+	   'create[Create a team or a subteam]' \
+	   'add-member[Add a user to a team]' \
+	   'add-members-bulk[Add users to a team in bulk]' \
+	   'remove-member[Remove a user from a team]' \
+	   'edit-member[Change a user's role on a team]' \
+	   'list-memberships[List your teams, or people on a team]' \
+	   'list-members[List your teams, or people on a team]' \
+	   'show-tree[Show a team's subteams]' \
+	   'rename[Change the name of a subteam]' \
+	   'request-access[Request access to a team]' \
+	   'list-requests[List requests to join teams]' \
+	   'ignore-request[Ignore request to join a team]' \
+	   'accept-invite[Accept a team email invitation]' \
+	   'leave[Leave a team]' \
+	   'delete[Delete a team]' \
+	   'api[JSON API]' \
+	   'settings[Edit team settings]'
+	;;
+      update)
+        _values "command" \
+          'check[Trigger an update check]' \
+          'run[Run the update with custom options]' \
+          'check-in-use[Check if we are in use (safe for restart)]' \
+          'notify[Notify the service about an update event]'
+        ;;
+      verify)
+        _command_args=(
+          '(--detached)--detached[Specify a detached signature file]' \
+          '(--infile)--infile[Specify an input file]' \
+          '(--message)--message[Provide the message to verify on the command line]' \
+          "(--no-output)--no-output[Don't output the verified message]" \
+          '(--outfile)--outfile[Specify an outfile (default is STDOUT)]'
+          '(--signed-by)--signed-by[Assert signed by the given user (can use user assertion fomat)]' \
+        )
+        ;;
+      version)
+        _command_args=(
+          "(--format)--format[Alternate format for version output. Specify 's' for simple (1.2.3) or 'v' for verbose. Default (blank) 
+includes build number (1.2.3-400)]" \
+          "(--no-service)--no-service[Don't report on the service's build information]"
+        )
+        ;;
+      wallet)
+        _wallet_sub=(
+            'api:JSON API' \
+            'balances:Show account balances' \
+	    'list:Show account balances' \
+	    'accounts:Show account balances' \
+            'cancel:Cancel a payment' \
+            'reclaim:Cancel a payment' \
+            'cancel-request:Cancel payment request' \
+            'detail:Show payment details' \
+	    'details:Show payment details' \
+            "export:Export a stellar account's secret key" \
+            'get-inflation:Get inflation destination address of an account' \
+            'get-started:Setup your Stellar wallet' \
+            'history:List recent payments to and from a stellar account' \
+            'import:Import Stellar account keys]' \
+            'lookup:Look up Stellar account ID based on Keybase name or Stellar federation address' \
+            'rename:Rename a Stellar account' \
+            'request:Request XLM from a Keybase user' \
+            'send:Send XLM to a keybase user or stellar address' \
+            'set-currency:Set stellar account display currency' \
+            'set-inflation:Set inflation destination address for an account' \
+            'set-primary:Set a stellar account to be your primary account (for sending and receiving)'
+	)
+	_describe -t subcommands 'Wallet Options' _wallet_sub && ret=0
+	;;
+    esac
+    ;;
+esac
+
+_arguments \
+  $_command_args \
+  &&  ret=0
+
+return ret
